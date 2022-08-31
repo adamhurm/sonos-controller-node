@@ -6,7 +6,7 @@ import { bootstrap, connectToDevice } from '../examples/utils'
 // ENTER DEVICE_ID to discover only a particular device`
 const DEVICE_ID: string | undefined = undefined
 
-// This function adds a buffer to a Nx9 Glyph
+// This function adds a buffer to the beginning and end of a Nx9 Glyph
 function banner_buffer(banner: string[]) {
     // return Glyph if it is not 9x9
     if (banner.length != 9) {
@@ -22,7 +22,7 @@ function banner_buffer(banner: string[]) {
 
 // This function creates a Glyph array for scrolling text animations.
 // TODO: Create function to add buffer to beginning and end of Glyph for clean transition.
-function banner_to_animation(banner: string[], add_buffer = true): Glyph[] {
+function banner_to_animation(banner: string[], add_buffer = false): Glyph[] {
     if (add_buffer) {
         banner = banner_buffer(banner)
     }
@@ -40,17 +40,17 @@ function banner_to_animation(banner: string[], add_buffer = true): Glyph[] {
     return animation
 }
 
-
+// This function displays the "SONOS" startup splash screen
 async function startup_splash(device: NuimoControlDevice) {
-    // Create a custom Glyph
-    // Nuimo has a 9x9 LED display
-        // You only need to create what you need
+    // Create a custom 9x9 Glyph for Nuimo LED display
+    // You only need to create what you need
     // and use `GlyphAlignment` to align the glyph
     //
-    // In order to use scrolling banners larger than 9x9,
+    // In order to use scrolling banners longer than 9x9,
     // send your Nx9 string to scroll_text(example_banner_string)
     //
-    // For animated banner glyphs, I suggest adding leading and trailing whitespace.
+    // For animated banner glyphs,
+    // add_buffer will add leading and trailing spaces
     const sonos_string = [
         '                         ',
         ' **   **  *   *  **   ** ',
@@ -63,7 +63,7 @@ async function startup_splash(device: NuimoControlDevice) {
         '                         '
     ]
 
-    const animation: Glyph[] = banner_to_animation(sonos_string)
+    const animation: Glyph[] = banner_to_animation(sonos_string, true)
     device.displayGlyph(animation[0], {
                        alignment: GlyphAlignment.Center,
                        transition: DisplayTransition.CrossFade,
