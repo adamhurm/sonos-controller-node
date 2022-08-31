@@ -6,15 +6,25 @@ import { bootstrap, connectToDevice } from '../examples/utils'
 // ENTER DEVICE_ID to discover only a particular device`
 const DEVICE_ID: string | undefined = undefined
 
+// This function adds a buffer to a Nx9 Glyph
 function banner_buffer(banner: string[]) {
-    console.log("banner_buffer stub")
+    // return Glyph if it is not 9x9
+    if (banner.length != 9) {
+        return banner
+    }
+    let new_banner = [] as string[]
+    for (let i = 0; i < banner.length; i++) {
+	let new_banner_line = ' '.repeat(9) + banner[i] + ' '.repeat(9)
+	new_banner[i] = new_banner_line
+    }
+    return new_banner
 }
 
 // This function creates a Glyph array for scrolling text animations.
 // TODO: Create function to add buffer to beginning and end of Glyph for clean transition.
 function banner_to_animation(banner: string[], add_buffer = true): Glyph[] {
     if (add_buffer) {
-        banner_buffer(banner)
+        banner = banner_buffer(banner)
     }
     // total frames - 9 + 1 (becuase you need to have at least one frame)
     let framecount = banner[0].length - 8
@@ -42,15 +52,15 @@ async function startup_splash(device: NuimoControlDevice) {
     //
     // For animated banner glyphs, I suggest adding leading and trailing whitespace.
     const sonos_string = [
-        '                                           ',
-        '          **   **  *   *  **   **          ',
-        '         *  * *  * *   * *  * *  *         ',
-        '         *    *  * **  * *  * *            ',
-        '         **** *  * * * * *  * ****         ',
-        '            * *  * *  ** *  *    *         ',
-        '         *  * *  * *   * *  * *  *         ',
-        '          **   **  *   *  **   **          ',
-        '                                           '
+        '                         ',
+        ' **   **  *   *  **   ** ',
+        '*  * *  * *   * *  * *  *',
+        '*    *  * **  * *  * *   ',
+        '**** *  * * * * *  * ****',
+        '   * *  * *  ** *  *    *',
+        '*  * *  * *   * *  * *  *',
+        ' **   **  *   *  **   ** ',
+        '                         '
     ]
 
     const animation: Glyph[] = banner_to_animation(sonos_string)
