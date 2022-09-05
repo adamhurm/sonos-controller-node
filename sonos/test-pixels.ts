@@ -1,5 +1,4 @@
-import { DisplayTransition, Glyph, GlyphAlignment } from '..'
-import { NuimoControlDevice } from '..'
+import { DisplayTransition, DisplayComposition, Glyph, GlyphAlignment, NuimoControlDevice} from '..'
 import { bootstrap, connectToDevice } from '../examples/utils'
 
 // Uncomment to search for only your device
@@ -7,30 +6,30 @@ import { bootstrap, connectToDevice } from '../examples/utils'
 const DEVICE_ID: string | undefined = undefined
 
 // This function adds a buffer to the beginning and end of a Nx9 Glyph
-function banner_buffer(banner: string[]) {
+function bannerAddBuffer(banner: string[]) {
     // return Glyph if it is not 9x9
     if (banner.length != 9) {
         return banner
     }
-    let new_banner = [] as string[]
+    let newBanner : string[] = []
     for (let i = 0; i < banner.length; i++) {
-	let new_banner_line = ' '.repeat(9) + banner[i] + ' '.repeat(9)
-	new_banner[i] = new_banner_line
+	let newBannerLine : string = ' '.repeat(9) + banner[i] + ' '.repeat(9)
+	newBanner[i] = newBannerLine
     }
-    return new_banner
+    return newBanner
 }
 
 // This function creates a Glyph array for scrolling text animations.
 // TODO: Create function to add buffer to beginning and end of Glyph for clean transition.
-function banner_to_animation(banner: string[], add_buffer = false): Glyph[] {
-    if (add_buffer) {
-        banner = banner_buffer(banner)
+function bannerToAnimation(banner: string[], addBuffer = false): Glyph[] {
+    if (addBuffer) {
+        banner = bannerAddBuffer(banner)
     }
     // total frames - 9 + 1 (becuase you need to have at least one frame)
-    let framecount = banner[0].length - 8
-    let animation = [] as Glyph[]
-    for (let i = 0; i < framecount; i++) {
-        let frame = []
+    let frameCount = banner[0].length - 8
+    let animation : Glyph[] = []
+    for (let i = 0; i < frameCount; i++) {
+        let frame : string[] = []
         for (let row = 0; row < 9; row++) {
             frame.push(banner[row].substring(i,i+9))
             // console.log("Frame " + i + ", Row " + row + ": " + frame[row])
@@ -41,7 +40,7 @@ function banner_to_animation(banner: string[], add_buffer = false): Glyph[] {
 }
 
 // This function displays the "SONOS" startup splash screen
-async function startup_splash(device: NuimoControlDevice) {
+async function startupSplash(device: NuimoControlDevice) {
     // Create a custom 9x9 Glyph for Nuimo LED display
     // You only need to create what you need
     // and use `GlyphAlignment` to align the glyph
@@ -51,7 +50,7 @@ async function startup_splash(device: NuimoControlDevice) {
     //
     // For animated banner glyphs,
     // add_buffer will add leading and trailing spaces
-    const sonos_string = [
+    const sonosString : string[] = [
         '                         ',
         ' **   **  *   *  **   ** ',
         '*  * *  * *   * *  * *  *',
@@ -63,33 +62,31 @@ async function startup_splash(device: NuimoControlDevice) {
         '                         '
     ]
 
-    const animation: Glyph[] = banner_to_animation(sonos_string, true)
+    const animation: Glyph[] = bannerToAnimation(sonosString, true)
     device.displayGlyph(animation[0], {
                        alignment: GlyphAlignment.Center,
                        transition: DisplayTransition.CrossFade,
     })
 
-    let banner_frame = 0
+    let bannerFrame = 0
     const interval = setInterval(() => {
         // Check if the client is still connected
         if (!device.isConnected) {
             return
         }
         /* // Loop animation
-        if (banner_frame >= animation.length) {
-                banner_frame = 0
-        }
-        */
+        if (bannerFrame >= animation.length) {
+                bannerFrame = 0
+        } */
         // Stop animation after one cycle
-        // TODO: Add whitespace buffer to banner automatically
-        if (banner_frame >= animation.length) {
+        if (bannerFrame >= animation.length) {
             return
         }
-        device.displayGlyph(animation[banner_frame], {
+        device.displayGlyph(animation[bannerFrame], {
                 alignment: GlyphAlignment.Center,
                 transition: DisplayTransition.Immediate,
         })
-        banner_frame++
+        bannerFrame++
     }, 250)
 
     // If there is a disconnection, cancel the animation
@@ -105,7 +102,26 @@ async function startup_splash(device: NuimoControlDevice) {
 async function main() {
     const device = await connectToDevice(DEVICE_ID)
 
-    await startup_splash(device)
+    await startupSplash(device)
+
+    const volumeGlyph = Glyph.fromString([
+        ' **   ** ',
+        '*  * *  *',
+        '*  * *  *',
+        '*  * *  *',
+        '*  * *  *',
+        '*  * *  *',
+        ' **   ** '
+    ])
+
+    device.on('selectDown', () => {
+        device.displayGlyph(volumeGlyph, {
+                alignment: GlyphAlignment.Center,
+                compositionMode: DisplayComposition.Invert,
+                transition: DisplayTransition.CrossFade,
+        })
+    })
+    
     /*
     // When display button is pressed
     device.on('selectDown', () => {
