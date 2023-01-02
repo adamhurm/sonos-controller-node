@@ -1,6 +1,6 @@
 import { DisplayTransition, Glyph, GlyphAlignment, NuimoControlDevice} from '..'
-import { bootstrap, connectToDevice, logEvent } from '../examples/utils'
-import { digitGlyphsSmall, emptyGlyph, RotationMode } from '../src'
+import { bootstrap, connectToDevice } from '../examples/utils'
+import { digitGlyph100, digitGlyphsSmall, emptyGlyph, RotationMode } from '../src'
 const { Sonos } = require('sonos')
 
 // Uncomment to search for only your device
@@ -15,8 +15,8 @@ function bannerAddBuffer(banner: string[]) {
     }
     let newBanner : string[] = []
     for (let i = 0; i < banner.length; i++) {
-	let newBannerLine : string = ' '.repeat(9) + banner[i] + ' '.repeat(9)
-	newBanner[i] = newBannerLine
+        let newBannerLine : string = ' '.repeat(9) + banner[i] + ' '.repeat(9)
+        newBanner[i] = newBannerLine
     }
     return newBanner
 }
@@ -41,9 +41,10 @@ function bannerToAnimation(banner: string[], addBuffer = false): Glyph[] {
     return animation
 }
 
-
+// This function converts a number 0-100 to a Glyph
 function numberGlyph(n: number) {
     if ((n < 0) || (n > 100) || !Number.isInteger(n)) throw "outside of allowed range"
+    if (n == 100) { return digitGlyph100 }
     return concatGlyph(digitGlyphsSmall[Math.floor((n/10) % 10)], digitGlyphsSmall[n % 10])
 }
 
@@ -125,39 +126,8 @@ async function main() {
 
     await startupSplash(device)
 
-    /*
-    const volumeGlyph = Glyph.fromString([
-        ' **   ** ',
-        '*  * *  *',
-        '*  * *  *',
-        '*  * *  *',
-        '*  * *  *',
-        '*  * *  *',
-        ' **   ** '
-    ])
-    */
-    /*
-    DeviceDiscovery((device: typeof DeviceDiscovery) => {
-        console.log('found device at ' + device.host)
-
-	let groups = device.getAllGroups()
-	for (let i = 0; i < groups.length; i++) {
-	    console.log(groups[i].name)
-	}
-    })
-    DeviceDiscovery().once('DeviceAvailable', (device) => {
-        console.log('found device at ' + device.host)
-
-        // get all groups
-        device.getAllGroups().then(groups => {
-            groups.forEach(group => {
-            console.log(group.Name);
-            })
-        })
-    })
-    */
-
     const speaker = new Sonos('0.0.0.0')
+
     // Show current volume when display button is pressed & released.
     device.on('select', async() => {
         let volumeGlyph = numberGlyph(await speaker.getVolume())
@@ -165,7 +135,7 @@ async function main() {
                 alignment: GlyphAlignment.Center,
                 transition: DisplayTransition.CrossFade,
         })
-	await new Promise(f => setTimeout(f, 5000))
+        await new Promise(f => setTimeout(f, 5000))
         device.displayGlyph(emptyGlyph, {
                 alignment: GlyphAlignment.Center,
                 transition: DisplayTransition.CrossFade,
@@ -191,49 +161,25 @@ async function main() {
     })
     */
 
-    // Direction specific rotations
-    device.on('rotateLeft', (delta, rotation) => {
-        logEvent('rotateLeft', {
-            delta,
-            rotation,
+    // Volume Control
+    device.on('rotate', async(delta, rotation) => { 
+        let newVolume = Math.floor(((rotation + 1) * 100) / 2)
+        let volumeGlyph = numberGlyph(newVolume)
+        
+        speaker.setVolume(newVolume)
+        
+        device.displayGlyph(volumeGlyph, {
+                alignment: GlyphAlignment.Center,
+                transition: DisplayTransition.CrossFade,
+        })
+        await new Promise(f => setTimeout(f, 5000))
+        device.displayGlyph(emptyGlyph, {
+                alignment: GlyphAlignment.Center,
+                transition: DisplayTransition.CrossFade,
         })
     })
-    device.on('rotateRight', (delta, rotation) => {
-        logEvent('rotateRight', {
-            delta,
-            rotation,
-        })
-    })
-
-    /*
-    // When display button is pressed
-    device.on('selectDown', () => {
-        console.log('Display button presses')
-
-        device.displayGlyph(glyph, {
-            alignment: GlyphAlignment.Center,
-            compositionMode: DisplayComposition.Invert,
-            transition: DisplayTransition.CrossFade,
-        })
-    })
-
-    // When display button is released
-    device.on('selectUp', () => {
-        console.log('Display button released')
-
-        device.displayGlyph(glyph, {
-            alignment: GlyphAlignment.Center,
-            brightness: 0.2,
-            transition: DisplayTransition.CrossFade,
-        })
-    })
-
-    // When display button is pressed & released
-    device.on('select', () => {
-        console.log('Display button clicked')
-    })
-    */
 }
+
 
 // Boot strap async function
 bootstrap(main)
