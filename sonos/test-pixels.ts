@@ -1,5 +1,6 @@
-import { DisplayTransition, DisplayComposition, Glyph, GlyphAlignment, NuimoControlDevice} from '..'
-import { bootstrap, connectToDevice } from '../examples/utils'
+import { DisplayTransition, Glyph, GlyphAlignment, NuimoControlDevice} from '..'
+import { bootstrap, connectToDevice, logEvent } from '../examples/utils'
+import { digitGlyphsSmall, emptyGlyph, RotationMode } from '../src'
 
 // Uncomment to search for only your device
 // ENTER DEVICE_ID to discover only a particular device`
@@ -37,6 +38,25 @@ function bannerToAnimation(banner: string[], addBuffer = false): Glyph[] {
         animation.push(Glyph.fromString(frame))
     }
     return animation
+}
+
+
+function numberGlyph(n: number) {
+    if ((n < 0) || (n > 100) || !Number.isInteger(n)) throw "outside of allowed range"
+    return concatGlyph(digitGlyphsSmall[Math.floor((n/10) % 10)], digitGlyphsSmall[n % 10])
+}
+
+// This function concatenates two Glyphs, adding a space in between
+function concatGlyph(a: Glyph, b: Glyph): Glyph {
+    /*
+     * assert(a.characterRows.length === b.characterRows.length)
+     * assert(a.characterRows[0].length === b.characterRows[0].length)
+     */
+    let combined = []
+    for (let i = 0; i < a.characterRows.length; i++) {
+        combined.push(a.characterRows[i].concat(' ',b.characterRows[i]))
+    }
+    return Glyph.fromString(combined)
 }
 
 // This function displays the "SONOS" startup splash screen
@@ -104,6 +124,7 @@ async function main() {
 
     await startupSplash(device)
 
+    /*
     const volumeGlyph = Glyph.fromString([
         ' **   ** ',
         '*  * *  *',
@@ -113,15 +134,56 @@ async function main() {
         '*  * *  *',
         ' **   ** '
     ])
+    */
 
-    device.on('selectDown', () => {
+    const volumeGlyph = numberGlyph(87) 
+
+    // Show current volume when display button is pressed & released.
+    device.on('select', async() => {
         device.displayGlyph(volumeGlyph, {
                 alignment: GlyphAlignment.Center,
-                compositionMode: DisplayComposition.Invert,
+                transition: DisplayTransition.CrossFade,
+        })
+	await new Promise(f => setTimeout(f, 5000))
+        device.displayGlyph(emptyGlyph, {
+                alignment: GlyphAlignment.Center,
                 transition: DisplayTransition.CrossFade,
         })
     })
     
+    // Set the rotation mode to clamp, ensuring the rotation stops at a min/max value for us
+    device.rotationMode = RotationMode.Clamped
+
+    // When using clamped rotation you may set the min/max values using setRotationRange
+    // In this example the range is from -1 to 1, starting at 0 (mid-range)
+    // The final value represents the number of rotation cycles it takes between the min and max. By default
+    // this is the spread of the max-min (2 in this example). For example, this is set to 2 (1 positive and 1 negative rotation)
+    device.setRotationRange(-1, 1, 0, 1)
+
+    /*
+    // Rotation in any direction
+    device.on('rotate', (delta, rotation) => {
+        logEvent('rotate', {
+            delta,
+            rotation,
+        })
+    })
+    */
+
+    // Direction specific rotations
+    device.on('rotateLeft', (delta, rotation) => {
+        logEvent('rotateLeft', {
+            delta,
+            rotation,
+        })
+    })
+    device.on('rotateRight', (delta, rotation) => {
+        logEvent('rotateRight', {
+            delta,
+            rotation,
+        })
+    })
+
     /*
     // When display button is pressed
     device.on('selectDown', () => {

@@ -3,6 +3,99 @@ import { Glyph } from './glyph'
 /**
  * Digit glyphs
  */
+export const digitGlyphsSmall = [
+    Glyph.fromString([
+        ' ** ',
+        '*  *',
+        '*  *',
+        '*  *',
+        '*  *',
+        '*  *',
+        ' ** '
+    ]),
+    Glyph.fromString([
+        '  * ',
+        ' ** ',
+        '  * ',
+        '  * ',
+        '  * ',
+        '  * ',
+        ' ***',
+    ]),
+    Glyph.fromString([
+        ' ** ',
+        '*  *',
+        '  * ',
+        ' *  ',
+        '*   ',
+        '*   ',
+        '****'
+    ]),
+    Glyph.fromString([
+        ' ** ',
+        '*  *',
+        '   *',
+        ' ***',
+        '   *',
+        '*  *',
+        ' ** '
+    ]),
+    Glyph.fromString([
+        '*  *',
+        '*  *',
+        '*  *',
+        '****',
+        '   *',
+        '   *',
+        '   *'
+    ]),
+    Glyph.fromString([
+        '****',
+        '*   ',
+        '*   ',
+        '****',
+        '   *',
+        '   *',
+        '****'
+    ]),
+    Glyph.fromString([
+        '****',
+        '*  *',
+        '*   ',
+        '****',
+        '*  *',
+        '*  *',
+        '****'
+    ]),
+    Glyph.fromString([
+        '    ',
+        '****',
+        '   *',
+        '  * ',
+        ' *  ',
+        '*   ',
+        '    '
+    ]),
+    Glyph.fromString([
+        '****',
+        '*  *',
+        '*  *',
+        ' ** ',
+        '*  *',
+        '*  *',
+        '****'
+    ]),
+    Glyph.fromString([
+        '****',
+        '*  *',
+        '*  *',
+        '****',
+        '   *',
+        '   *',
+        '****'
+    ]),
+]
+
 export const digitGlyphs = [
     Glyph.fromString([
         '         ',
