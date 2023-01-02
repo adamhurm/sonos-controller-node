@@ -86,10 +86,12 @@ async function startupSplash(device: NuimoControlDevice) {
         if (!device.isConnected) {
             return
         }
+        
         /* // Loop animation
         if (bannerFrame >= animation.length) {
                 bannerFrame = 0
         } */
+
         // Stop animation after one cycle
         if (bannerFrame >= animation.length) {
             return
@@ -103,10 +105,6 @@ async function startupSplash(device: NuimoControlDevice) {
 
     // If there is a disconnection, cancel the animation.
     device.on('disconnect', () => {
-        clearInterval(interval)
-    })
-    // If the display button is touched, cancel the animation.
-    device.on('touch', () => {
         clearInterval(interval)
     })
 
