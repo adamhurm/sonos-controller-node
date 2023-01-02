@@ -130,7 +130,7 @@ async function main() {
 
     device.on('select', async() => {
 	let status = await speaker.getCurrentState()
-	let toggleGlyph = pauseGlyph
+	let toggleGlyph = emptyGlyph
 	if (status == "playing") {
 	    toggleGlyph = pauseGlyph
 	}
@@ -164,7 +164,7 @@ async function main() {
     // In this example the range is from -1 to 1, starting at 0 (mid-range)
     // The final value represents the number of rotation cycles it takes between the min and max. By default
     // this is the spread of the max-min (2 in this example). For example, this is set to 2 (1 positive and 1 negative rotation)
-    device.setRotationRange(-1, 1, 0, 1)
+    device.setRotationRange(-1, 1, 0, 2)
 
     /*
     // Rotation in any direction
@@ -184,11 +184,6 @@ async function main() {
         speaker.setVolume(newVolume)
         
         device.displayGlyph(volumeGlyph, {
-                alignment: GlyphAlignment.Center,
-                transition: DisplayTransition.CrossFade,
-        })
-        await new Promise(f => setTimeout(f, 5000))
-        device.displayGlyph(emptyGlyph, {
                 alignment: GlyphAlignment.Center,
                 transition: DisplayTransition.CrossFade,
         })
