@@ -20,12 +20,13 @@
     "knob",
     "volume"
   ],
-  "main": "dist/index.js",
+  "main": "src/index.ts",
   "types": "dts/index.d.ts",
   "dependencies": {
     "@abandonware/noble": "^1.9.2-14",
     "check-types": "^11.1",
     "debug": "^4.3",
+    "sonos": "^1.14.1",
     "tslib": "^2.2",
     "weak-napi": "^2.0"
   },

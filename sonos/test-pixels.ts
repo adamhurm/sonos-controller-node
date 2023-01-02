@@ -52,7 +52,7 @@ function numberGlyph(n: number) {
 // This function concatenates two Glyphs, adding a space in between
 function concatGlyph(a: Glyph, b: Glyph): Glyph {
     if (a.characterRows.length != b.characterRows.length) throw "Glyph heights do not match"
-    let combined = []
+    let combined : string[] = []
     for (let i = 0; i < a.characterRows.length; i++) {
         combined.push(a.characterRows[i].concat(' ', b.characterRows[i]))
     }
@@ -124,6 +124,7 @@ async function main() {
 
     // Play + Pause when display button is clicked.
     device.on('select', async() => {
+        // Get current speaker state and choose Glyph
         let status = await speaker.getCurrentState()
         let toggleGlyph = emptyGlyph
         if (status == "playing") {
@@ -132,8 +133,15 @@ async function main() {
         else if (status == "paused") {
             toggleGlyph = playGlyph
         }
+        // Toggle speaker and show status Glyph display button
         speaker.togglePlayback()
         device.displayGlyph(toggleGlyph, {
+                alignment: GlyphAlignment.Center,
+                transition: DisplayTransition.CrossFade,
+        })
+        // Clear display button after 5 seconds
+        await new Promise(f => setTimeout(f, 5000))
+        device.displayGlyph(emptyGlyph, {
                 alignment: GlyphAlignment.Center,
                 transition: DisplayTransition.CrossFade,
         })
@@ -146,6 +154,7 @@ async function main() {
                 alignment: GlyphAlignment.Center,
                 transition: DisplayTransition.CrossFade,
         })
+        // Clear display button after 5 seconds
         await new Promise(f => setTimeout(f, 5000))
         device.displayGlyph(emptyGlyph, {
                 alignment: GlyphAlignment.Center,
