@@ -23,10 +23,10 @@ export const digitGlyphsSmall = [
         ' ***',
     ]),
     Glyph.fromString([
-        ' ** ',
+        '****',
         '*  *',
-        '  * ',
-        ' *  ',
+        '   *',
+        '****',
         '*   ',
         '*   ',
         '****'
@@ -97,13 +97,13 @@ export const digitGlyphsSmall = [
 ]
 
 export const digitGlyph100 = Glyph.fromString([
-    ' * **    ',
-    '***  *   ',
-    ' **  *   ',
-    ' * ** ** ',
-    ' *   *  *',
-    ' *   *  *',
-    '***   ** ',
+    '* *** ***',
+    '* * * * *',
+    '* * * * *',
+    '* * * * *',
+    '* * * * *',
+    '* * * * *',
+    '* *** ***',
 ])
 
 export const digitGlyphs = [
