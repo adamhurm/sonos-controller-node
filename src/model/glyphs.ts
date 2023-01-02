@@ -32,13 +32,13 @@ export const digitGlyphsSmall = [
         '****'
     ]),
     Glyph.fromString([
-        ' ** ',
-        '*  *',
+        '****',
+        '   *',
         '   *',
         ' ***',
         '   *',
-        '*  *',
-        ' ** '
+        '   *',
+        '****'
     ]),
     Glyph.fromString([
         '*  *',
@@ -68,19 +68,19 @@ export const digitGlyphsSmall = [
         '****'
     ]),
     Glyph.fromString([
-        '    ',
         '****',
         '   *',
         '  * ',
+        '  * ',
         ' *  ',
-        '*   ',
-        '    '
+        ' *  ',
+        '*   '
     ]),
     Glyph.fromString([
         '****',
         '*  *',
         '*  *',
-        ' ** ',
+        '****',
         '*  *',
         '*  *',
         '****'

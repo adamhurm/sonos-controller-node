@@ -1,6 +1,7 @@
 import { DisplayTransition, Glyph, GlyphAlignment, NuimoControlDevice} from '..'
 import { bootstrap, connectToDevice, logEvent } from '../examples/utils'
 import { digitGlyphsSmall, emptyGlyph, RotationMode } from '../src'
+const { Sonos } = require('sonos')
 
 // Uncomment to search for only your device
 // ENTER DEVICE_ID to discover only a particular device`
@@ -135,11 +136,31 @@ async function main() {
         ' **   ** '
     ])
     */
+    /*
+    DeviceDiscovery((device: typeof DeviceDiscovery) => {
+        console.log('found device at ' + device.host)
 
-    const volumeGlyph = numberGlyph(87) 
+	let groups = device.getAllGroups()
+	for (let i = 0; i < groups.length; i++) {
+	    console.log(groups[i].name)
+	}
+    })
+    DeviceDiscovery().once('DeviceAvailable', (device) => {
+        console.log('found device at ' + device.host)
 
+        // get all groups
+        device.getAllGroups().then(groups => {
+            groups.forEach(group => {
+            console.log(group.Name);
+            })
+        })
+    })
+    */
+
+    const speaker = new Sonos('0.0.0.0')
     // Show current volume when display button is pressed & released.
     device.on('select', async() => {
+        let volumeGlyph = numberGlyph(await speaker.getVolume())
         device.displayGlyph(volumeGlyph, {
                 alignment: GlyphAlignment.Center,
                 transition: DisplayTransition.CrossFade,
