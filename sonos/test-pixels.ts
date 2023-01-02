@@ -1,6 +1,6 @@
 import { DisplayTransition, Glyph, GlyphAlignment, NuimoControlDevice} from '..'
 import { bootstrap, connectToDevice } from '../examples/utils'
-import { digitGlyph100, digitGlyphsSmall, emptyGlyph, RotationMode } from '../src'
+import { digitGlyph100, digitGlyphsSmall, emptyGlyph, pauseGlyph, playGlyph, RotationMode } from '../src'
 const { Sonos } = require('sonos')
 
 // Uncomment to search for only your device
@@ -128,8 +128,23 @@ async function main() {
 
     const speaker = new Sonos('0.0.0.0')
 
-    // Show current volume when display button is pressed & released.
     device.on('select', async() => {
+	let status = await speaker.getCurrentState()
+	let toggleGlyph = pauseGlyph
+	if (status == "playing") {
+	    toggleGlyph = pauseGlyph
+	}
+	else if (status == "paused") {
+	    toggleGlyph = playGlyph
+	}
+	speaker.togglePlayback()
+        device.displayGlyph(toggleGlyph, {
+	        alignment: GlyphAlignment.Center,
+	        transition: DisplayTransition.CrossFade,
+	})
+    })
+    // Show current volume when display button is pressed & released.
+    device.on('touch', async() => {
         let volumeGlyph = numberGlyph(await speaker.getVolume())
         device.displayGlyph(volumeGlyph, {
                 alignment: GlyphAlignment.Center,
